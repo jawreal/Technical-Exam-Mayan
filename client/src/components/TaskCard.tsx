@@ -8,11 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Ellipsis } from 'lucide-react';
 
-interface IProps {
-  title: string; 
-  status: string;
-  description: string;
-}
+interface IProps extends Omit<Task, "id"> {}
 
 export default function TaskCard (props: IProps) {
   const { title, status, description } = props;
@@ -20,12 +16,13 @@ export default function TaskCard (props: IProps) {
   return (
   <Card>
     <CardContent className="relative">
-       <Button variant="ghost" className="absolute top-3 right-3">
+       <Button variant="ghost" className="absolute top-2 right-3">
          <Ellipsis size={20} />
        </Button> 
        <CardHeader className="px-0 pb-0 pt-5">
-         <CardTitle>Card Title</CardTitle>
-         <CardDescription>Card Description
+         <CardTitle>{title ?? "No title found"}</CardTitle>
+         <CardDescription>
+          {description ?? "No description found"}
          </CardDescription>
        </CardHeader>
      </CardContent>
