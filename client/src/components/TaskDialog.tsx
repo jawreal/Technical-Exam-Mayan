@@ -15,12 +15,13 @@ import type { Dispatch, SetStateAction } from "react";
 
 interface DialogProps {
   open: boolean;
+  id?: string; // Optional only for update
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   isUpdate?: boolean;
 }
 
 export default function TaskDialog (props: DialogProps) {
-  const { open, onOpenChange, isUpdate = false } = props;
+  const { open, id, onOpenChange, isUpdate = false } = props;
   return (
   <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent>
