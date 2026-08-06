@@ -1,5 +1,11 @@
+import { Button } from "@/components/ui/button";
 import TaskCard from "@/components/TaskCard";
 import SearchInput from "@/components/SearchInput";
+import FilterDropdown from "@/components/FilterDropdown";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+
+type FilterBy = "all" | "active" | "inactive" | "complete";
 
 const tasks: Task[] = [
   {
@@ -94,11 +100,25 @@ const tasks: Task[] = [
   }
 ];
 
+const FILTER_BY_OPTIONS: FilterBy =["all", "active", "inactive", "complete"]
+
 export default function MainPage () {
+  const [filterBy, setFilterBy] = useState<FilterBy>("all")
   return (
-    <div className="p-5 flex flex-col gap-y-5">
-     <div>
+    <div className="p-5 flex flex-col gap-y-5 bg-gray-50 min-h-screen">
+     <div className="flex flex-col md:flex-row gap-y-3 md:gap-x-4" >
        <SearchInput />
+       <div className="ml-auto flex gap-x-3">
+          <FilterDropdown
+            state={filterBy} 
+            setState={setFilterBy}
+            options={FILTER_BY_OPTIONS}
+          />
+          <Button className="rounded-lg">
+           Add Task
+           <Plus />
+          </Button>  
+       </div>
      </div>
      <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
         {tasks.map(task => (

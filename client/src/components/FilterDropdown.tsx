@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Check, type LucideIcon } from "lucide-react";
+import { Check, ListFilter } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,35 +11,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Dispatch, SetStateAction } from "react";
 import { useCallback, memo, type JSX } from "react";
-import { cn } from "@/lib/utils";
 
-interface ICustomDropdown<T> {
+interface IFilterDropdown<T> {
   state: T;
   setState?: Dispatch<SetStateAction<T>>;
-  onSelect?: (e?: Event) => void;
   options: T[];
-  btnClassName?: string;
-  dropdownWidth?: string;
-  dropdownLabel?: string;
-  icon: LucideIcon;
-  leftIcon?: boolean;
 }
 
-export default memo(CustomDropdown) as <T>(
-  props: ICustomDropdown<T>,
-) => JSX.Element;
-
-function CustomDropdown<T>(props: ICustomDropdown<T>) {
+function FilterDropdown<T>(props: IFilterDropdown<T>) {
   const {
     state,
     setState,
     options,
-    btnClassName,
-    dropdownWidth,
-    icon: Icon,
-    leftIcon = false,
-    onSelect, // for custom onSelect
-    dropdownLabel, 
   } = props;
 
   const selectOption = useCallback(
@@ -59,26 +42,26 @@ function CustomDropdown<T>(props: ICustomDropdown<T>) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className={cn("font-inter rounded-lg justify-between px-3 text-gray-600 dark:text-gray-200", btnClassName)}
+          className="font-inter rounded-lg justify-between px-3 text-gray-600 dark:text-gray-200"
           id={state as string}
         >
-          <span className={cn(leftIcon && "order-1")}>{state as string}</span>
-          <Icon className="text-gray-400" />
+          <span className="capitalize" >{state as string}</span>
+          <ListFilter className="text-gray-400" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className={cn("font-inter", dropdownWidth)}
         align="start"
       >
         <DropdownMenuGroup>
-          {dropdownLabel &&
           <div>
-            <DropdownMenuLabel>{dropdownLabel}</DropdownMenuLabel> 
+            <DropdownMenuLabel>
+              Filter by
+            </DropdownMenuLabel> 
             <DropdownMenuSeparator />
-          </div>}
+          </div>
           {options?.map((option: T) => (
             <DropdownMenuItem
-              onSelect={setState ? selectOption : onSelect}
+              onSelect={selectOption}
               id={option as string}
               key={option as string}
               className="capitalize"
@@ -92,3 +75,7 @@ function CustomDropdown<T>(props: ICustomDropdown<T>) {
     </DropdownMenu>
   );
 }
+
+export default memo(FilterDropdown) as <T>(
+  props: IFilterDropdown<T>,
+) => JSX.Element; 

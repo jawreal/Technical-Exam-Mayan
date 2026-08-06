@@ -14,7 +14,7 @@ export default function TaskCard (props: IProps) {
   const { title, status, description } = props;
   
   return (
-  <Card>
+  <Card className="shadow-none">
     <CardContent className="relative">
        <Button variant="ghost" className="absolute top-2 right-3">
          <Ellipsis size={20} />
