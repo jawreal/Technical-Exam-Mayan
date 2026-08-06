@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import TaskCard from "@/components/TaskCard";
 import SearchInput from "@/components/SearchInput";
 import FilterDropdown from "@/components/FilterDropdown";
+import TaskDialog from "@/components/TaskDialog";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
@@ -100,12 +101,19 @@ const tasks: Task[] = [
   }
 ];
 
-const FILTER_BY_OPTIONS: FilterBy =["all", "active", "inactive", "complete"]
+const FILTER_BY_OPTIONS: FilterBy[] =["all", "active", "inactive", "complete"]
 
 export default function MainPage () {
-  const [filterBy, setFilterBy] = useState<FilterBy>("all")
+  const [filterBy, setFilterBy] = useState<FilterBy>("all");
+  const [openAddTask, setOpenAddTask] = useState<boolean>(false);
+  
+  const handleAddTask = () => {
+    setOpenAddTask(true)
+  }
+  
   return (
-    <div className="p-5 flex flex-col gap-y-5 bg-gray-50 min-h-screen">
+    <div className="p-5 flex flex-col bg-gray-50 min-h-screen">
+     <h1 className="font-bold text-2xl md:text-3xl mb-3">Task Management</h1>
      <div className="flex flex-col md:flex-row gap-y-3 md:gap-x-4" >
        <SearchInput />
        <div className="ml-auto flex gap-x-3">
@@ -114,13 +122,20 @@ export default function MainPage () {
             setState={setFilterBy}
             options={FILTER_BY_OPTIONS}
           />
-          <Button className="rounded-lg">
+          <Button 
+            onClick={handleAddTask}
+            className="rounded-lg"
+           >
            Add Task
            <Plus />
           </Button>  
+          <TaskDialog
+            open={openAddTask} 
+            onOpenChange={setOpenAddTask}
+          />
        </div>
      </div>
-     <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
+     <div className="mt-5 columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
         {tasks.map(task => (
           <div key={task.id} className="break-inside-avoid mb-4">
             <TaskCard 

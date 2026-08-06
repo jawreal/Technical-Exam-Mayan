@@ -8,9 +8,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Ellipsis } from 'lucide-react';
 
-interface IProps extends Omit<Task, "id"> {}
+interface TaskProps extends Omit<Task, "id"> {}
 
-export default function TaskCard (props: IProps) {
+export default function TaskCard (props: TaskProps) {
   const { title, status, description } = props;
   
   return (
