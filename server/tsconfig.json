@@ -8,7 +8,6 @@
     "noUnusedLocals": true,    
     "noUnusedParameters": true, 
     "skipLibCheck": true, // Important to stop type checking libraries 
-    "ignoreDeprecations": "6.0", 
     "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "./src",
