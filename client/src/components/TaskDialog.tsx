@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import type { Dispatch, SetStateAction } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useCallback } from "react";
+import { CustomToast } from "@/components/CustomToast";
+import addTask from "@/services/addTask";
 
 interface DialogProps {
   open: boolean;
@@ -13,8 +15,6 @@ interface DialogProps {
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   isUpdate?: boolean;
 }
-
-interface IAddTask extends Pick<Task, "title" | "description"> {};
 
 export default function TaskDialog (props: DialogProps) {
   const { open, id, onOpenChange, isUpdate = false } = props;
@@ -24,19 +24,41 @@ export default function TaskDialog (props: DialogProps) {
     reset,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<IAddTask>({
+  } = useForm<TaskFormData>({
     mode: "onChange", // Needed for onChange validation so error message would appear
   });
 
   // Submit handler
-  const onSubmit: SubmitHandler<IAddTask> = useCallback(
+  const onSubmit: SubmitHandler<TaskFormData> = useCallback(
     async (data) => {
       console.log(data)
       /* reset();
       queryClient.invalidateQueries({ queryKey: ["admin-records"], });
-      onOpenChange(false); */
+      */
+      
+      try{
+        if(isUpdate){
+          
+        }else{
+          await addTask(data)
+        }
+        
+        // Show pop up
+        CustomToast({
+          description: isUpdate ? "Task has been updated" : "Task has been added", 
+          status: "success"
+        });
+        
+        // Close the dialog 
+        onOpenChange(false)
+      }catch(error){
+        CustomToast({
+          description: error instanceof Error ? error.message : "Something went wrong", 
+          status: "error"
+        });
+      }
     },
-    [onOpenChange], // add deps
+    [onOpenChange, isUpdate], // add deps
   );
 
   return (
@@ -53,7 +75,7 @@ export default function TaskDialog (props: DialogProps) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-y-3 [&_label]:text-sm mb-2 [&_label]:text-gray-700">
+          <div className="mt-3 flex flex-col gap-y-3 [&_label]:text-sm mb-2 [&_label]:text-gray-700">
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input
