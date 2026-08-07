@@ -10,19 +10,19 @@ import {
   DropdownMenuSeparator, 
 } from "@/components/ui/dropdown-menu";
 import type { Dispatch, SetStateAction } from "react";
-import { useCallback, memo, type JSX } from "react";
+import { useCallback, memo } from "react";
 
-interface IFilterDropdown<T> {
-  state: T;
-  setState?: Dispatch<SetStateAction<T>>;
-  options: T[];
+interface FilterDropdown {
+  state: FilterBy; // FilterBy is located at global types
+  setState?: Dispatch<SetStateAction<FilterBy>>;
 }
 
-function FilterDropdown<T>(props: IFilterDropdown<T>) {
+const FILTER_BY_OPTIONS: FilterBy[] =["all", "incomplete", "completed"]
+
+function FilterDropdown (props: FilterDropdown) {
   const {
     state,
     setState,
-    options,
   } = props;
 
   const selectOption = useCallback(
@@ -32,7 +32,7 @@ function FilterDropdown<T>(props: IFilterDropdown<T>) {
         /* Set the state based on selected option */
       }
       const id = (e.currentTarget as HTMLElement).id;
-      setState?.(id as T);
+      setState?.(id as FilterBy);
     },
     [setState],
   );
@@ -59,7 +59,7 @@ function FilterDropdown<T>(props: IFilterDropdown<T>) {
             </DropdownMenuLabel> 
             <DropdownMenuSeparator />
           </div>
-          {options?.map((option: T) => (
+          {FILTER_BY_OPTIONS.map((option: FilterBy) => (
             <DropdownMenuItem
               onSelect={selectOption}
               id={option as string}
@@ -76,6 +76,4 @@ function FilterDropdown<T>(props: IFilterDropdown<T>) {
   );
 }
 
-export default memo(FilterDropdown) as <T>(
-  props: IFilterDropdown<T>,
-) => JSX.Element; 
+export default memo(FilterDropdown);

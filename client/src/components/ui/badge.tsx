@@ -1,7 +1,12 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
+
+const STATUS_STYLES: Record<Status, string> = {
+  complete:
+    "bg-sky-50 text-sky-700 dark:text-sky-200 border border-sky-100 dark:border-0 dark:bg-zinc-900/80",
+  incomplete: "bg-amber-50 text-amber-700 dark:text-amber-200 border border-amber-100 dark:border-0 dark:bg-zinc-900/80",
+}; 
 
 const badgeVariants = cva(
   "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -15,6 +20,7 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
+        ...STATUS_STYLES, 
       },
     },
     defaultVariants: {
