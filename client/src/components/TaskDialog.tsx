@@ -1,4 +1,12 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose, } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +24,7 @@ interface DialogProps {
   isUpdate?: boolean;
 }
 
-export default function TaskDialog (props: DialogProps) {
+export default function TaskDialog(props: DialogProps) {
   const { open, id, onOpenChange, isUpdate = false } = props;
 
   const {
@@ -31,30 +39,32 @@ export default function TaskDialog (props: DialogProps) {
   // Submit handler
   const onSubmit: SubmitHandler<TaskFormData> = useCallback(
     async (data) => {
-      console.log(data)
-      /* reset();
+      console.log(data);
+      /*
       queryClient.invalidateQueries({ queryKey: ["admin-records"], });
       */
-      
-      try{
-        if(isUpdate){
-          
-        }else{
-          await addTask(data)
+
+      try {
+        if (isUpdate) {
+        } else {
+          await addTask(data);
         }
-        
+
         // Show pop up
         CustomToast({
-          description: isUpdate ? "Task has been updated" : "Task has been added", 
-          status: "success"
+          description: isUpdate
+            ? "Task has been updated"
+            : "Task has been added",
+          status: "success",
         });
-        
-        // Close the dialog 
-        onOpenChange(false)
-      }catch(error){
+
+        reset(); // Empty the form
+        onOpenChange(false); // Close the dialog
+      } catch (error) {
         CustomToast({
-          description: error instanceof Error ? error.message : "Something went wrong", 
-          status: "error"
+          description:
+            error instanceof Error ? error.message : "Something went wrong",
+          status: "error",
         });
       }
     },
@@ -66,12 +76,11 @@ export default function TaskDialog (props: DialogProps) {
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader className="text-left">
-            <DialogTitle>{isUpdate? "Update Task" : "Add Task"}</DialogTitle>
+            <DialogTitle>{isUpdate ? "Update Task" : "Add Task"}</DialogTitle>
             <DialogDescription>
               {isUpdate
-               ? "Make changes to the task title, and description"
-                : "Fill in the details to add a new task to your board."
-              }
+                ? "Make changes to the task title, and description"
+                : "Fill in the details to add a new task to your board."}
             </DialogDescription>
           </DialogHeader>
 
@@ -83,7 +92,10 @@ export default function TaskDialog (props: DialogProps) {
                 id="title"
                 {...register("title", { required: "Task title is required" })}
               />
-              {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>} {/* Show error */}
+              {errors.title && (
+                <p className="text-red-500 text-xs">{errors.title.message}</p>
+              )}{" "}
+              {/* Show error */}
             </div>
 
             <div className="space-y-2">
@@ -92,9 +104,16 @@ export default function TaskDialog (props: DialogProps) {
                 placeholder="Enter task description"
                 id="description"
                 rows={4}
-                {...register("description", { required: "Description is required" })}
+                {...register("description", {
+                  required: "Description is required",
+                })}
               />
-              {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>} {/* Show error */}
+              {errors.description && (
+                <p className="text-red-500 text-xs">
+                  {errors.description.message}
+                </p>
+              )}{" "}
+              {/* Show error */}
             </div>
           </div>
 
@@ -109,13 +128,21 @@ export default function TaskDialog (props: DialogProps) {
                 Close
               </Button>
             </DialogClose>
-            <Button type="submit" className="rounded-lg" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="rounded-lg"
+              disabled={isSubmitting}
+            >
               {/* type submit */}
-              {isSubmitting ? "Saving..." : (isUpdate ? "Save Changes" : "Save Task")}
+              {isSubmitting
+                ? "Saving..."
+                : isUpdate
+                  ? "Save Changes"
+                  : "Save Task"}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
-};
+  );
+}
