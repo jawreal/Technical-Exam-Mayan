@@ -6,13 +6,16 @@ declare global {
   
   // For task data 
   interface Task {
-    id: number;
+    id: string;
     title: string;
     status: Status;
     description: string;
   }
   
-  // For adding and updating task
+  // For adding task
   interface TaskFormData extends Pick<Task, "title" | "description"> {}
+  
+  // For updating task
+  interface UpdateFormData extends TaskFormData, Pick<Task, "id"> {}
    
 }

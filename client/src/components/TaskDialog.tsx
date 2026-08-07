@@ -13,19 +13,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import type { Dispatch, SetStateAction } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { CustomToast } from "@/components/CustomToast";
 import addTask from "@/services/addTask";
+import updateTask from "@/services/updateTask";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface DialogProps {
   open: boolean;
   id?: string; // Optional only for update
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   isUpdate?: boolean;
+  prevData?: TaskFormData;
 }
 
 export default function TaskDialog(props: DialogProps) {
-  const { open, id, onOpenChange, isUpdate = false } = props;
+  const queryClient = useQueryClient();
+  const { open, id, onOpenChange, prevData, isUpdate = false } = props;
 
   const {
     register,
@@ -39,13 +43,12 @@ export default function TaskDialog(props: DialogProps) {
   // Submit handler
   const onSubmit: SubmitHandler<TaskFormData> = useCallback(
     async (data) => {
-      console.log(data);
-      /*
-      queryClient.invalidateQueries({ queryKey: ["admin-records"], });
-      */
-
       try {
         if (isUpdate) {
+          await updateTask({
+           ...data, 
+           id
+          });
         } else {
           await addTask(data);
         }
@@ -59,6 +62,7 @@ export default function TaskDialog(props: DialogProps) {
         });
 
         reset(); // Empty the form
+        queryClient.invalidateQueries({ queryKey: ["tasks-data"] }); // Refresh all tasks data
         onOpenChange(false); // Close the dialog
       } catch (error) {
         CustomToast({
@@ -68,8 +72,22 @@ export default function TaskDialog(props: DialogProps) {
         });
       }
     },
-    [onOpenChange, isUpdate], // add deps
+    [onOpenChange, isUpdate, queryClient, id], // add deps
   );
+  
+  // Populate form fields with existing data for editing 
+  useEffect(() => {
+    if (prevData && isUpdate) {
+      reset({
+        title: prevData?.title || "",
+        description: prevData?.description || "",
+      });
+    } else {
+      reset({
+        title: "", // Clear the form fields
+      });
+    }
+  }, [prevData, reset, isUpdate]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -83,7 +101,6 @@ export default function TaskDialog(props: DialogProps) {
                 : "Fill in the details to add a new task to your board."}
             </DialogDescription>
           </DialogHeader>
-
           <div className="mt-3 flex flex-col gap-y-3 [&_label]:text-sm mb-2 [&_label]:text-gray-700">
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>

@@ -4,7 +4,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator, 
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useState, memo, type JSX } from "react";
 import TaskDialog from "@/components/TaskDialog";
@@ -15,40 +15,37 @@ interface ActionProps {
   id: string;
   status: Status; // Incomplete or complete
   children: JSX.Element;
+  prevData: TaskFormData;
 }
 
 const ACTIONS_OPTIONS: Actions[] = ["edit", "delete"];
 
 function ActionDropdown(props: ActionProps) {
   const [openTaskDialog, setOpenTaskDialog] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const {
-    id, 
-    children, 
-  } = props;
-  
-  const handleTask = (isUpdate: boolean) => {
-    // If isUpdate is true, the TaskDialog will be for updating task otherwise it's for adding. 
-    setIsEdit(isUpdate);
-    setOpenTaskDialog(true); 
-  }
+  const { id, status, children, prevData  } = props;
+  const handleTask = () => {
+    setOpenTaskDialog(true);
+  };
 
   return (
     <DropdownMenu>
-      <TaskDialog isUpdate={isEdit} open={openTaskDialog} onOpenChange={setOpenTaskDialog} />
+      <TaskDialog
+        id={id} 
+        isUpdate={true}
+        open={openTaskDialog}
+        prevData={prevData}
+        onOpenChange={setOpenTaskDialog}
+      />
       <DropdownMenuTrigger asChild>
         {children /* Render the button */}
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="start"
-        className="mr-3 min-w-32"
-      >
+      <DropdownMenuContent align="start" className="mr-3 min-w-32">
         <DropdownMenuGroup>
           {ACTIONS_OPTIONS.map((option: Actions) => (
             <DropdownMenuItem
               onSelect={(e) => {
-                e.preventDefault()
-                handleTask(option === "edit") 
+                e.preventDefault();
+                handleTask();
               }}
               id={option as string}
               key={option as string}
@@ -61,9 +58,9 @@ function ActionDropdown(props: ActionProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <div className="flex flex-col">
-                 <span className="text-gray-500 text-xs">Mark as</span>
-                 <span>Complete</span>
-               </div>
+                <span className="text-gray-500 text-xs">Mark as</span>
+                <span>Complete</span>
+              </div>
             </DropdownMenuItem>
           </div>
         </DropdownMenuGroup>

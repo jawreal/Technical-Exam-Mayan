@@ -87,6 +87,7 @@ export default function MainPage () {
             {data?.tasks?.map((task: Task) => (
               <div key={task.id} className="break-inside-avoid mb-4">
                 <TaskCard 
+                 id={task.id}
                  title={task.title}
                  status={task.status}
                  description={task.description}
