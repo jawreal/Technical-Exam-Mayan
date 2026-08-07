@@ -1,23 +1,24 @@
 import type { Request, Response, NextFunction } from "express";
 import { db } from "@/db";
 import { taskTable } from "@/db/schema";
+import { type CreateTaskInput } from "@/middlewares/taskSchema";
 
 const addTask = async (
-  req: Request,
+  req: Request<{}, {}, CreateTaskInput>,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  try{
-    const task: typeof taskTable.$inferInsert = req.body;
+  try {
+    const task = req.body;
     await db.insert(taskTable).values(task);
-    console.log("Task has been added")
-   
+    
+    console.log("Task has been added");
     res.status(200).json({
-      message: "Task has been added"
+      message: "Task has been added",
     });
-  }catch(error){
+  } catch (error) {
     // Pass the error to the error handler
-    next(error)
+    next(error);
   }
 };
 

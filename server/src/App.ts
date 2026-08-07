@@ -5,7 +5,7 @@ import taskRouter from "@/routers";
 const app = express();
 
 app.use(express.json());
-app.use("/app", taskRouter);
+app.use("/api", taskRouter);
 app.use(errorHandler);
 
 export default app;
