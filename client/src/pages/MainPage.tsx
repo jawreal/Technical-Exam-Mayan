@@ -4,143 +4,98 @@ import SearchInput from "@/components/SearchInput";
 import FilterDropdown from "@/components/FilterDropdown";
 import TaskDialog from "@/components/TaskDialog";
 import { useState } from "react";
-import { Plus } from "lucide-react";
-
-const tasks: Task[] = [
-  {
-    id: 1,
-    title: "Create Login Page",
-    status: "complete",
-    description: "Build the login page with email validation and password requirements."
-  },
-  {
-    id: 2,
-    title: "Dashboard Analytics",
-    status: "incomplete", 
-    description: "Create dashboard with charts, stats, and recent activity. Must be responsive on mobile."
-  },
-  {
-    id: 3,
-    title: "User Profile",
-    status: "complete",
-    description: "Allow users to update avatar, name, and bio information."
-  },
-  {
-    id: 4,
-    title: "Settings Page",
-    status: "incomplete", 
-    description: "Build settings for notifications, themes, security, and API keys."
-  },
-  {
-    id: 5,
-    title: "Email Notifications",
-    status: "incomplete", 
-    description: "Send email when tasks are assigned, completed, or overdue."
-  },
-  {
-    id: 6,
-    title: "Generate Reports",
-    status: "incomplete", 
-    description: "Export tasks to PDF and Excel. Include filters by date and status."
-  },
-  {
-    id: 7,
-    title: "Task Search & Filter",
-    status: "complete",
-    description: "Implement search bar and filter by status, date, and assignee."
-  },
-  {
-    id: 8,
-    title: "Drag and Drop Tasks",
-    status: "incomplete", 
-    description: "Enable drag and drop to reorder tasks between columns."
-  },
-  {
-    id: 9,
-    title: "Dark Mode Toggle",
-    status: "complete",
-    description: "Add theme switcher with system preference detection."
-  },
-  {
-    id: 10,
-    title: "File Upload",
-    status: "incomplete", 
-    description: "Allow attaching files to tasks. Max 10MB per file."
-  },
-  {
-    id: 11,
-    title: "Team Members",
-    status: "incomplete", 
-    description: "Create invite system and role management for team members."
-  },
-  {
-    id: 12,
-    title: "Calendar View",
-    status: "incomplete", 
-    description: "Show tasks in a monthly calendar with due dates."
-  },
-  {
-    id: 13,
-    title: "Comments Section",
-    status: "complete",
-    description: "Let users comment and reply on tasks with markdown support."
-  },
-  {
-    id: 14,
-    title: "Push Notifications",
-    status: "incomplete", 
-    description: "Send browser push notifications for task deadlines."
-  },
-  {
-    id: 15,
-    title: "Onboarding Flow",
-    status: "incomplete", 
-    description: "Create 3-step onboarding for new users with tooltips."
-  }
-];
+import { Plus, Loader, AlertCircle } from "lucide-react";
+import { type ChangeEvent } from "react";
+import useDebounce from "@/hooks/useDebounce";
+import { useQuery } from "@tanstack/react-query";
+import getAllTasks from "@/services/getAllTasks";
 
 export default function MainPage () {
   const [filterBy, setFilterBy] = useState<FilterBy>("all");
   const [openAddTask, setOpenAddTask] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>(""); 
+  const debouncedValue = useDebounce(searchValue); // Optimized search value 
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["tasks-data", filterBy, debouncedValue], 
+    queryFn: () => getAllTasks({
+      filter: filterBy, 
+      query: debouncedValue, 
+    })
+  }); // For querying data
   
+  // For adding task
   const handleAddTask = () => {
     setOpenAddTask(true)
+  };
+  
+  // Search functionality
+  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
   }
   
   return (
     <div className="p-5 flex flex-col bg-gray-50 min-h-screen">
-     <h1 className="font-bold text-2xl md:text-3xl mb-3">Task Management</h1>
-     <div className="flex flex-col md:flex-row gap-y-3 md:gap-x-4" >
-       <SearchInput />
-       <div className="ml-auto flex gap-x-3">
-          <FilterDropdown
-            state={filterBy} 
-            setState={setFilterBy}
-          />
-          <Button 
-            onClick={handleAddTask}
-            className="rounded-lg"
-           >
-           Add Task
-           <Plus />
-          </Button>  
-          <TaskDialog
-            open={openAddTask} 
-            onOpenChange={setOpenAddTask}
-          />
-       </div>
-     </div>
-     <div className="mt-5 columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
-        {tasks.map(task => (
-          <div key={task.id} className="break-inside-avoid mb-4">
-            <TaskCard 
-             title={task.title}
-             status={task.status}
-             description={task.description}
-           />
+      {/* max-w-6xl wrapper centers all content on the page */}
+      <div className="w-full max-w-6xl mx-auto flex flex-col flex-1">
+        <h1 className="font-bold text-2xl md:text-3xl mb-3">Task Management</h1>
+        <div className="flex flex-col md:flex-row gap-y-3 md:gap-x-4" >
+          {/* Search input */} 
+          <SearchInput value={searchValue} onChange={onSearchChange} />
+          <div className="ml-auto flex gap-x-3">
+             <FilterDropdown
+               state={filterBy} 
+               setState={setFilterBy}
+             />
+             <Button 
+               onClick={handleAddTask}
+               className="rounded-lg"
+              >
+              Add Task
+              <Plus />
+             </Button>  
+             <TaskDialog
+               open={openAddTask} 
+               onOpenChange={setOpenAddTask}
+             />
           </div>
-        ))}
-     </div>
+        </div>
+
+        {/* Loading state — centered spinner with custom color */}
+        {isLoading && (
+          <div className="flex flex-1 items-center justify-center py-20">
+            <Loader size={40} className="animate-spin text-gray-600" />
+          </div>
+        )}
+
+        {/* Error state */}
+        {isError && !isLoading && (
+          <div className="flex flex-1 flex-col items-center justify-center py-20 text-center gap-2">
+            <AlertCircle size={40} className="text-red-500" />
+            <p className="text-red-600 font-medium">
+              Something went wrong while loading tasks.
+            </p>
+            <p className="text-sm text-gray-500">
+              {error instanceof Error ? error.message : "Please try again later."}
+            </p>
+          </div>
+        )}
+
+        {/* Data state */}
+        {!isLoading && !isError && (
+          <div className="mt-5 columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
+            {data?.tasks?.map((task: Task) => (
+              <div key={task.id} className="break-inside-avoid mb-4">
+                <TaskCard 
+                 title={task.title}
+                 status={task.status}
+                 description={task.description}
+               />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
