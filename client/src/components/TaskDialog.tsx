@@ -29,7 +29,7 @@ export default function TaskDialog (props: DialogProps) {
         <DialogTitle>{isUpdate ? "Update Task" : "Add Task"}</DialogTitle>
          <DialogDescription>
           {isUpdate 
-            ? "Make changes to the task title, description, and status." 
+            ? "Make changes to the task title, and description" 
            : "Fill in the details to add a new task to your board."
           }
          </DialogDescription>

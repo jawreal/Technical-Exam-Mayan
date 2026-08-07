@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2023",
+    "strict": true,
+    "esModuleInterop": true, // Allows using import instead of require 
+    "noUnusedLocals": true,    
+    "noUnusedParameters": true, 
+    "skipLibCheck": true, // Important to stop type checking libraries 
+    "ignoreDeprecations": "6.0", 
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  }, 
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "replacers": {
+      "@/*": "./src/*"
+    }
+  }, 
+  "include": ["src/**/*", "types"],
+  "exclude": ["node_modules", "dist"]
+}
