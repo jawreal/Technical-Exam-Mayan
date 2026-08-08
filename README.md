@@ -2,7 +2,7 @@
 
 A fullstack task management application built as a take-home technical exam. It supports creating, tracking, and organizing tasks through a clean, card-based interface backed by a type-safe REST API.
 
-**Live demo:** [Link]
+**Live demo:** [https://technical-exam-mayan.onrender.com]
 
 > **Note:** The demo is hosted on Render's free tier. The initial request may take 2–3 minutes to load as the server spins up from an idle state, and subsequent responses may feel slightly delayed due to free-tier resource limits.
 
