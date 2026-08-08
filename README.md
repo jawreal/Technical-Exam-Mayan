@@ -92,6 +92,8 @@ Ensure `DATABASE_URL` is set in your `.env` file before running any of the comma
    npx drizzle-kit migrate
    ```
 
+> **Note:** In production, `npm start` runs `db:migrate` automatically before the server boots, so pending migrations are applied on every deploy without a manual step.
+
 ---
 
 ## Running the Project
@@ -123,7 +125,8 @@ If you'd rather run each workspace independently:
 | `npm run dev`        | Start the server in development mode          |
 | `npm run type-check` | Run TypeScript type checking                   |
 | `npm run build`      | Compile TypeScript to JavaScript               |
-| `npm run start`      | Run the compiled production build              |
+| `npm run db:migrate` | Apply pending Drizzle migrations to the database |
+| `npm run start`      | Apply pending migrations, then run the compiled production build |
 
 **Client** (from the `client` directory):
 
