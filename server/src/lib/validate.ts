@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Request, Response, NextFunction } from "express";
+import { type GetTasksQuery } from "@/middlewares/querySchema";
 
 type Target = "body" | "query" | "params";
 
@@ -21,7 +22,13 @@ export const validate = ({ schema, target = "body" }: ValidateOptions) =>
         errors: result.error.flatten().fieldErrors // Send actual zod errors
       });
     }
-
-    req[target] = result.data; // Overwrite with sanitized + typed data
+    
+    if (target === "query") {
+      // Since query is immutable now in express 5, attaching field is needed 
+      req.validatedQuery = result.data as GetTasksQuery;
+    } else {
+      req[target] = result.data;
+    }
+    
     next();
 }

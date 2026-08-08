@@ -5,12 +5,12 @@ import { type GetTasksQuery } from "@/middlewares/querySchema";
 import { or, eq, and, ilike } from "drizzle-orm";
 
 const getTasks = async (
-  req: Request<{}, {}, {}, GetTasksQuery>,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { query, filter } = req.query;
+    const { query, filter } = req.validatedQuery as GetTasksQuery;
     const status = filter === "all" ? undefined : filter; // "all" | "incomplete" | "complete"
     const conditions = [];
     
