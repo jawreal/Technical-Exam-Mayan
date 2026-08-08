@@ -4,9 +4,9 @@ import { Search } from "lucide-react";
 
 interface InputProps extends  InputHTMLAttributes<HTMLInputElement> {};
 
-export default function CustomInput (props: InputProps) {
+export default function SearchInput (props: InputProps) {
   return (
-    <div className="w-full relative">
+    <div className="w-full relative md:max-w-lg">
       {/* Search icon */}
       <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-zinc-400">
         <Search className="text-gray-400 size-[20px] md:size-[19px]" />

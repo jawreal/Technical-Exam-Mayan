@@ -10,16 +10,12 @@ import { apiClient } from "@/services/apiClient";
 import FormField from "@/components/FormField"; 
 import { useQueryClient } from "@tanstack/react-query";
 
-/*
-  * UpdateFormData & TaskFormData is located at types/global.d.ts
-*/
-
 interface TaskDialogProps {
   open: boolean;
   id?: string;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   isUpdate?: boolean;
-  prevData?: TaskFormData;
+  prevData?: TaskFormData; // Located at types/global.d.ts
 }
 
 const defaultEmptyValues: TaskFormData = { title: "", description: "" };
@@ -49,11 +45,13 @@ export default function TaskDialog({
       const message = await apiClient<UpdateFormData>("/api/update-task", { 
         method: "PATCH", 
         body: { ...data, id }
-      });
+      }); // UpdateFormData is located at types/global.d.ts 
       
+      // Show notification 
       if(message){
         CustomToast({ description: message, status: "success" }); 
       }
+      
     } else {
       const message = await apiClient<TaskFormData>("/api/add-task", {
         method: "POST", 
@@ -69,10 +67,11 @@ export default function TaskDialog({
   const onSubmit: SubmitHandler<TaskFormData> = async (data) => {
     try {
       await handleSave(data);
-      reset(defaultEmptyValues);
-      queryClient.invalidateQueries({ queryKey: ["tasks-data"] });
-      onOpenChange(false);
+      reset(defaultEmptyValues); // Reset the form
+      queryClient.invalidateQueries({ queryKey: ["tasks-data"] }); // Refresh all tasks data
+      onOpenChange(false); // Close the dialog
     } catch (error) {
+      // Show notification error 
       CustomToast({ 
         description: error instanceof Error ? error.message : "Something went wrong", 
         status: "error" 
@@ -101,13 +100,15 @@ export default function TaskDialog({
           </DialogHeader>
 
           <div className="mt-3 space-y-4 mb-4">
+            {/* Task title field */} 
             <FormField label="Title" error={errors.title?.message}>
               <Input 
                 placeholder="Enter task title" 
                 {...register("title", { required: "Task title is required" })} 
               />
             </FormField>
-
+            
+            {/* Task description field */} 
             <FormField label="Description" error={errors.description?.message}>
               <Textarea 
                 placeholder="Enter task description" 
@@ -118,11 +119,14 @@ export default function TaskDialog({
           </div>
 
           <DialogFooter className="flex flex-row justify-end gap-x-3">
+            {/* Cancel button */} 
             <DialogClose asChild>
               <Button variant="outline" type="button" className="rounded-lg">
                 Close
               </Button>
             </DialogClose>
+            
+            {/* Submit button */} 
             <Button type="submit" className="rounded-lg" disabled={isSubmitting}>
               {isSubmitting ? "Saving..." : isUpdate ? "Save Changes" : "Save Task"}
             </Button>

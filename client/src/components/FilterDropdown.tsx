@@ -10,16 +10,16 @@ import {
   DropdownMenuSeparator, 
 } from "@/components/ui/dropdown-menu";
 import type { Dispatch, SetStateAction } from "react";
-import { useCallback, memo } from "react";
+import { useCallback } from "react";
 
 interface FilterDropdown {
-  state: FilterBy; // FilterBy is located at global types
+  state: FilterBy; // Located at types/global.d.ts 
   setState?: Dispatch<SetStateAction<FilterBy>>;
 }
 
 const FILTER_BY_OPTIONS: FilterBy[] =["all", "incomplete", "completed"]
 
-function FilterDropdown (props: FilterDropdown) {
+export default function FilterDropdown (props: FilterDropdown) {
   const {
     state,
     setState,
@@ -38,6 +38,7 @@ function FilterDropdown (props: FilterDropdown) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
+        {/* For toggling drop-down */} 
         <Button
           variant="outline"
           className="font-inter rounded-lg justify-between px-3 text-gray-600 dark:text-gray-200"
@@ -52,11 +53,14 @@ function FilterDropdown (props: FilterDropdown) {
       >
         <DropdownMenuGroup>
           <div>
+            {/* Filter label */} 
             <DropdownMenuLabel>
               Filter by
             </DropdownMenuLabel> 
             <DropdownMenuSeparator />
           </div>
+          
+          {/* Filter options */} 
           {FILTER_BY_OPTIONS.map((option: FilterBy) => (
             <DropdownMenuItem
               onSelect={selectOption}
@@ -73,5 +77,3 @@ function FilterDropdown (props: FilterDropdown) {
     </DropdownMenu>
   );
 }
-
-export default memo(FilterDropdown);

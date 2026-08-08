@@ -24,13 +24,17 @@ export default function TaskCard(props: TaskProps) {
     <Card className="shadow-none">
       <CardContent className="relative">
         <ActionDropdown status={status} id={id} prevData={rest}>
+          {/* For toggling drop-down */} 
           <Button variant="ghost" className="absolute top-2 right-3">
             <Ellipsis size={20} />
           </Button>
         </ActionDropdown>
         <CardHeader className="px-0 pb-0 pt-5">
           <div className="flex flex-col gap-y-2 w-[calc(100%-20px)]">
+            {/* Title */}
             <CardTitle>{rest?.title ?? "No title found"}</CardTitle>
+            
+            {/* Status */} 
             <Badge
               variant={status}
               className="rounded-full gap-x-1 capitalize px-2 py-1 self-start text-xs"
@@ -39,6 +43,8 @@ export default function TaskCard(props: TaskProps) {
               {status}
             </Badge>
           </div>
+          
+          {/* Task description */} 
           <CardDescription className="mt-10">
             {rest?.description ?? "No description found"}
           </CardDescription>

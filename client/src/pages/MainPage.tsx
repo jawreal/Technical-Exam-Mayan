@@ -36,17 +36,20 @@ export default function MainPage () {
   
   return (
     <div className="p-5 flex flex-col bg-gray-50 min-h-screen">
-      {/* max-w-6xl wrapper centers all content on the page */}
       <div className="w-full max-w-6xl mx-auto flex flex-col flex-1">
         <h1 className="font-bold text-2xl md:text-3xl mb-3">Task Management</h1>
         <div className="flex flex-col md:flex-row gap-y-3 md:gap-x-4" >
           {/* Search input */} 
           <SearchInput value={searchValue} onChange={onSearchChange} />
+          
           <div className="ml-auto flex gap-x-3">
+             {/* Filter drop-down */} 
              <FilterDropdown
                state={filterBy} 
                setState={setFilterBy}
              />
+             
+             {/* Button for adding task */} 
              <Button 
                onClick={handleAddTask}
                className="rounded-lg"
@@ -61,7 +64,7 @@ export default function MainPage () {
           </div>
         </div>
 
-        {/* Loading state — centered spinner with custom color */}
+        {/* Loading state — centered */}
         {isLoading && (
           <div className="flex flex-1 items-center justify-center py-20">
             <Loader size={40} className="animate-spin text-gray-600" />

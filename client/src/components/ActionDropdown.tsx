@@ -82,12 +82,15 @@ export default function ActionDropdown({ id, status, children, prevData }: Actio
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="mr-3 min-w-32">
         <DropdownMenuGroup>
+          {/* Edit option */} 
           <DropdownMenuItem onSelect={(e) => {
-            e.preventDefault();
-            handleEdit();
+            e.preventDefault(); // For stopping bug 
+            handleEdit(); 
           }}>
             Edit
           </DropdownMenuItem>
+          
+          {/* Delete option */}
           <DropdownMenuItem onSelect={(e) => {
             e.preventDefault();
             handleDelete();
@@ -96,6 +99,8 @@ export default function ActionDropdown({ id, status, children, prevData }: Actio
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        
+        {/* Mark as complete/incomplete option */} 
         <DropdownMenuItem onSelect={(e) => {
           e.preventDefault();
           handleToggleStatus();

@@ -15,7 +15,7 @@ export default function FormField({
   return (
     <div className="space-y-2">
       <Label className="text-sm text-gray-700">{label}</Label>
-      {children}
+      {children} 
       {error && <p className="text-red-500 text-xs">{error}</p>}
     </div>
   );
