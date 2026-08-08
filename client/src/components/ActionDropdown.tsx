@@ -50,10 +50,29 @@ export default function ActionDropdown({ id, status, children, prevData }: Actio
     }
   };
 
-  const handleToggleStatus = () => {
-    const newStatus: Status = status === "complete" ? "incomplete" : "complete";
-    // TODO: call updateTask({ id, status: newStatus })
-    console.log("toggle to", newStatus, id);
+  const handleToggleStatus = async () => {
+    try{
+      const newStatus: Status = status === "complete" ? "incomplete" : "complete";
+     
+      await apiClient<Pick<ActionProps, "id" | "status">>("/api/update-status", {
+        method: "PATCH",
+        body: { id, status: newStatus }
+      });
+      
+      queryClient.invalidateQueries({
+        queryKey: ["tasks-data"]
+      }); // Refresh all task after deleting
+      
+      CustomToast({
+        description: `Marked as ${newStatus}`, 
+        status: "success"
+      })
+    }catch(error){
+      CustomToast({ 
+        description: error instanceof Error ? error.message : "Something went wrong", 
+        status: "error" 
+      });
+    }
   };
 
   return ( 
