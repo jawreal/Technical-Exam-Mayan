@@ -1,74 +1,75 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger, 
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { useState, memo, type ReactNode } from "react";
-import TaskDialog from "@/components/TaskDialog";
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu"; 
+import { useState, type ReactNode } from "react"; 
+import TaskDialog from "@/components/TaskDialog"; 
 
-type Actions = "edit" | "delete";
+type Status = "complete" | "incomplete";
 
-interface ActionProps {
-  id: string;
-  status: Status; // Incomplete or complete
-  children: ReactNode;
-  prevData: TaskFormData;
+interface ActionProps { 
+  id: string; 
+  status: Status; 
+  children: ReactNode; 
+  prevData: TaskFormData; 
 }
 
-const ACTIONS_OPTIONS: Actions[] = ["edit", "delete"];
+export default function ActionDropdown({ id, status, children, prevData }: ActionProps) { 
+  const [openTaskDialog, setOpenTaskDialog] = useState(false); 
 
-function ActionDropdown(props: ActionProps) {
-  const [openTaskDialog, setOpenTaskDialog] = useState<boolean>(false);
-  const { id, status, children, prevData  } = props;
-  const handleTask = () => {
-    setOpenTaskDialog(true);
+  const handleEdit = () => setOpenTaskDialog(true);
+  
+  const handleDelete = () => {
+    // TODO: call deleteTask(id)
+    console.log("delete", id);
   };
 
-  return (
-    <DropdownMenu>
-      {/* Task modal/dialog */}
-      <TaskDialog
-        id={id} 
-        isUpdate={true}
-        open={openTaskDialog}
-        prevData={prevData}
-        onOpenChange={setOpenTaskDialog}
-      />
-      
-      <DropdownMenuTrigger asChild>
-        {children /* Render the button */}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="mr-3 min-w-32">
-        <DropdownMenuGroup>
-          {ACTIONS_OPTIONS.map((option: Actions) => (
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                handleTask();
-              }}
-              id={option as string}
-              key={option as string}
-              className="capitalize"
-            >
-              {option}
-            </DropdownMenuItem>
-          ))}
-          <div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <div className="flex flex-col">
-                <span className="text-gray-500 text-xs">Mark as</span>
-                <span>Complete</span>
-              </div>
-            </DropdownMenuItem>
-          </div>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
+  const handleToggleStatus = () => {
+    const newStatus: Status = status === "complete" ? "incomplete" : "complete";
+    // TODO: call updateTask({ id, status: newStatus })
+    console.log("toggle to", newStatus, id);
+  };
 
-export default memo(ActionDropdown);
+  return ( 
+    <DropdownMenu> 
+      <TaskDialog 
+        id={id} 
+        isUpdate={true} 
+        open={openTaskDialog} 
+        prevData={prevData} 
+        onOpenChange={setOpenTaskDialog} 
+      /> 
+
+      <DropdownMenuTrigger asChild> 
+        {children} 
+      </DropdownMenuTrigger> 
+
+      <DropdownMenuContent align="start" className="mr-3 min-w-32"> 
+        <DropdownMenuGroup>
+          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleEdit(); }}>
+            Edit
+          </DropdownMenuItem> 
+          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleDelete(); }} className="text-red-600">
+            Delete
+          </DropdownMenuItem> 
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator /> 
+
+        <DropdownMenuItem onSelect={(e) => {
+          e.preventDefault();
+          handleToggleStatus();
+        }}>
+          <div className="flex flex-col">
+            <span className="text-gray-500 text-xs">Mark as</span> 
+            <span>{status === "complete" ? "Incomplete" : "Complete"}</span> 
+          </div>
+        </DropdownMenuItem>
+      </DropdownMenuContent> 
+    </DropdownMenu> 
+  ); 
+}
