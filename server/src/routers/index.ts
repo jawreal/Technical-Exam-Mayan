@@ -1,6 +1,6 @@
 import { Router } from "express";
 import addTask from "@/controllers/addTask";
-import updateTask from "@/controllers/addTask";
+import updateTask from "@/controllers/updateTask";
 import getTasks from "@/controllers/getTasks";
 import {
   createTaskSchema,

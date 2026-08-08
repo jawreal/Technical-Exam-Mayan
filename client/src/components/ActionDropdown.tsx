@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { useState, memo, type JSX } from "react";
+import { useState, memo, type ReactNode } from "react";
 import TaskDialog from "@/components/TaskDialog";
 
 type Actions = "edit" | "delete";
@@ -14,7 +14,7 @@ type Actions = "edit" | "delete";
 interface ActionProps {
   id: string;
   status: Status; // Incomplete or complete
-  children: JSX.Element;
+  children: ReactNode;
   prevData: TaskFormData;
 }
 
@@ -29,6 +29,7 @@ function ActionDropdown(props: ActionProps) {
 
   return (
     <DropdownMenu>
+      {/* Task modal/dialog */}
       <TaskDialog
         id={id} 
         isUpdate={true}
@@ -36,6 +37,7 @@ function ActionDropdown(props: ActionProps) {
         prevData={prevData}
         onOpenChange={setOpenTaskDialog}
       />
+      
       <DropdownMenuTrigger asChild>
         {children /* Render the button */}
       </DropdownMenuTrigger>

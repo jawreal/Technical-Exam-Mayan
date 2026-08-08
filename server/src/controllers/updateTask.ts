@@ -19,6 +19,7 @@ const updateTask = async (
       
     if (!updatedTask) {
       // Check if found otherwise throw error
+      console.log("Task not found")
       return res.status(404).json({ message: "Task not found" });
     }
     
@@ -27,6 +28,7 @@ const updateTask = async (
       message: "Task has been updated",
     });
   } catch (error) {
+    console.log("Error in update task")
     // Pass the error to the error handler
     next(error);
   }

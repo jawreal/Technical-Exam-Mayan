@@ -1,93 +1,76 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import type { Dispatch, SetStateAction } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { CustomToast } from "@/components/CustomToast";
 import addTask from "@/services/addTask";
 import updateTask from "@/services/updateTask";
+import FormField from "@/components/FormField"; 
 import { useQueryClient } from "@tanstack/react-query";
 
-interface DialogProps {
+interface TaskDialogProps {
   open: boolean;
-  id?: string; // Optional only for update
+  id?: string;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   isUpdate?: boolean;
   prevData?: TaskFormData;
 }
 
-export default function TaskDialog(props: DialogProps) {
-  const queryClient = useQueryClient();
-  const { open, id, onOpenChange, prevData, isUpdate = false } = props;
+const defaultEmptyValues: TaskFormData = { title: "", description: "" };
 
-  const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { isSubmitting, errors },
+export default function TaskDialog({ 
+  open, 
+  id, 
+  onOpenChange, 
+  prevData, 
+  isUpdate = false 
+}: TaskDialogProps) {
+  const queryClient = useQueryClient();
+
+  const { 
+    register, 
+    reset, 
+    handleSubmit, 
+    formState: { isSubmitting, errors } 
   } = useForm<TaskFormData>({
-    mode: "onChange", // Needed for onChange validation so error message would appear
+    defaultValues: defaultEmptyValues,
+    mode: "onChange",
   });
 
-  // Submit handler
-  const onSubmit: SubmitHandler<TaskFormData> = useCallback(
-    async (data) => {
-      try {
-        if (isUpdate) {
-          await updateTask({
-           ...data, 
-           id
-          });
-        } else {
-          await addTask(data);
-        }
-
-        // Show pop up
-        CustomToast({
-          description: isUpdate
-            ? "Task has been updated"
-            : "Task has been added",
-          status: "success",
-        });
-
-        reset(); // Empty the form
-        queryClient.invalidateQueries({ queryKey: ["tasks-data"] }); // Refresh all tasks data
-        onOpenChange(false); // Close the dialog
-      } catch (error) {
-        CustomToast({
-          description:
-            error instanceof Error ? error.message : "Something went wrong",
-          status: "error",
-        });
-      }
-    },
-    [onOpenChange, isUpdate, queryClient, id], // add deps
-  );
-  
-  // Populate form fields with existing data for editing 
-  useEffect(() => {
-    if (prevData && isUpdate) {
-      reset({
-        title: prevData?.title || "",
-        description: prevData?.description || "",
-      });
+  const handleSave = async (data: TaskFormData) => {
+    if (isUpdate) {
+      if (!id) throw new Error("Missing task id");
+      await updateTask({ ...data, id });
+      CustomToast({ description: "Task has been updated", status: "success" });
     } else {
-      reset({
-        title: "", // Clear the form fields
+      await addTask(data);
+      CustomToast({ description: "Task has been added", status: "success" });
+    }
+  };
+
+  const onSubmit: SubmitHandler<TaskFormData> = async (data) => {
+    try {
+      await handleSave(data);
+      reset(defaultEmptyValues);
+      queryClient.invalidateQueries({ queryKey: ["tasks-data"] });
+      onOpenChange(false);
+    } catch (error) {
+      CustomToast({ 
+        description: error instanceof Error ? error.message : "Something went wrong", 
+        status: "error" 
       });
     }
-  }, [prevData, reset, isUpdate]);
+  };
+
+  // Reset when dialog opens
+  useEffect(() => {
+    if (open) {
+      reset(isUpdate && prevData ? prevData : defaultEmptyValues);
+    }
+  }, [open, isUpdate, prevData, reset]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -96,66 +79,37 @@ export default function TaskDialog(props: DialogProps) {
           <DialogHeader className="text-left">
             <DialogTitle>{isUpdate ? "Update Task" : "Add Task"}</DialogTitle>
             <DialogDescription>
-              {isUpdate
-                ? "Make changes to the task title, and description"
+              {isUpdate 
+                ? "Make changes to the task title and description" 
                 : "Fill in the details to add a new task to your board."}
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-3 flex flex-col gap-y-3 [&_label]:text-sm mb-2 [&_label]:text-gray-700">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                placeholder="Enter task title"
-                id="title"
-                {...register("title", { required: "Task title is required" })}
-              />
-              {errors.title && (
-                <p className="text-red-500 text-xs">{errors.title.message}</p>
-              )}{" "}
-              {/* Show error */}
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                placeholder="Enter task description"
-                id="description"
-                rows={4}
-                {...register("description", {
-                  required: "Description is required",
-                })}
+          <div className="mt-3 space-y-4 mb-4">
+            <FormField label="Title" error={errors.title?.message}>
+              <Input 
+                placeholder="Enter task title" 
+                {...register("title", { required: "Task title is required" })} 
               />
-              {errors.description && (
-                <p className="text-red-500 text-xs">
-                  {errors.description.message}
-                </p>
-              )}{" "}
-              {/* Show error */}
-            </div>
+            </FormField>
+
+            <FormField label="Description" error={errors.description?.message}>
+              <Textarea 
+                placeholder="Enter task description" 
+                rows={4} 
+                {...register("description", { required: "Description is required" })} 
+              />
+            </FormField>
           </div>
 
           <DialogFooter className="flex flex-row justify-end gap-x-3">
             <DialogClose asChild>
-              <Button
-                variant="outline"
-                type="button"
-                className="rounded-lg"
-                onClick={() => reset()} // reset on close
-              >
+              <Button variant="outline" type="button" className="rounded-lg">
                 Close
               </Button>
             </DialogClose>
-            <Button
-              type="submit"
-              className="rounded-lg"
-              disabled={isSubmitting}
-            >
-              {/* type submit */}
-              {isSubmitting
-                ? "Saving..."
-                : isUpdate
-                  ? "Save Changes"
-                  : "Save Task"}
+            <Button type="submit" className="rounded-lg" disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : isUpdate ? "Save Changes" : "Save Task"}
             </Button>
           </DialogFooter>
         </form>

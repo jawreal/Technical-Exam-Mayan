@@ -15,6 +15,7 @@ export const validate = ({ schema, target = "body" }: ValidateOptions) =>
     const result = schema.safeParse(dataToValidate);
 
     if (!result.success) {
+      console.log("Invalid fields")
       return res.status(400).json({
         message: "Invalid fields",
         errors: result.error.flatten().fieldErrors // Send actual zod errors

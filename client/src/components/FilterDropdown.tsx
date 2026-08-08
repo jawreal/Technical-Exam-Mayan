@@ -28,9 +28,7 @@ function FilterDropdown (props: FilterDropdown) {
   const selectOption = useCallback(
     (e: Event) => {
       e.preventDefault();
-      {
-        /* Set the state based on selected option */
-      }
+      // It based on option 
       const id = (e.currentTarget as HTMLElement).id;
       setState?.(id as FilterBy);
     },
