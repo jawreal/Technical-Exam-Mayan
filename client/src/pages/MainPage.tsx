@@ -71,7 +71,7 @@ export default function MainPage () {
         {/* Error state */}
         {isError && !isLoading && (
           <div className="flex flex-1 flex-col items-center justify-center py-20 text-center gap-2">
-            <AlertCircle size={40} className="text-red-500" />
+            <AlertCircle size={30} className="text-red-500" />
             <p className="text-red-600 font-medium">
               Something went wrong while loading tasks.
             </p>
