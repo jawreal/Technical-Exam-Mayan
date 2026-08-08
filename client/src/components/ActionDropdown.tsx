@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/dropdown-menu"; 
 import { useState, type ReactNode } from "react"; 
 import TaskDialog from "@/components/TaskDialog"; 
+import { CustomToast } from "@/components/CustomToast";
+import deleteTask from "@/services/deleteTask";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Status = "complete" | "incomplete";
 
@@ -19,13 +22,27 @@ interface ActionProps {
 }
 
 export default function ActionDropdown({ id, status, children, prevData }: ActionProps) { 
+  const queryClient = useQueryClient();
   const [openTaskDialog, setOpenTaskDialog] = useState(false); 
 
   const handleEdit = () => setOpenTaskDialog(true);
   
-  const handleDelete = () => {
-    // TODO: call deleteTask(id)
-    console.log("delete", id);
+  const handleDelete = async () => {
+    try{
+      await deleteTask(id);
+      queryClient.invalidateQueries({
+        queryKey: ["tasks-data"]
+      }); // Refresh all task after deleting
+      CustomToast({
+        description: "Task has been deleted", 
+        status: "success"
+      })
+    }catch(error){
+      CustomToast({ 
+        description: error instanceof Error ? error.message : "Something went wrong", 
+        status: "error" 
+      });
+    }
   };
 
   const handleToggleStatus = () => {

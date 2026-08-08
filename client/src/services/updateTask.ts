@@ -11,7 +11,7 @@ const updateTask = async (data: UpdateFormData) => {
   });
 
   if (!response.ok) {
-    // Try to parse the error from your API
+    // Parse the error 
     const errorData = await response.json().catch(() => null);
     
     const message = errorData?.message || `Request failed with status ${response.status}`;

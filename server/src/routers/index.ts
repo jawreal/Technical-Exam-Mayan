@@ -2,9 +2,11 @@ import { Router } from "express";
 import addTask from "@/controllers/addTask";
 import updateTask from "@/controllers/updateTask";
 import getTasks from "@/controllers/getTasks";
+import deleteTask from "@/controllers/deleteTask";
 import {
   createTaskSchema,
-  updateTaskSchema
+  updateTaskSchema,  
+  deleteTaskSchema
 } from "@/middlewares/taskSchema";
 import { getTasksQuerySchema } from "@/middlewares/querySchema";
 import { validate } from "@/lib/validate";
@@ -20,6 +22,11 @@ router.patch(
   "/update-task",
   validate({ schema: updateTaskSchema }),
   updateTask,
+);
+router.delete(
+  "/delete-task",
+  validate({ schema: deleteTaskSchema }),
+  deleteTask,
 );
 
 export default router;
