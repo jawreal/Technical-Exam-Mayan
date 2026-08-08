@@ -5,7 +5,7 @@ type ApiOptions<T = unknown> = Omit<RequestInit, "body"> & {
 export async function apiClient<T = unknown>(
   url: string, 
   options: ApiOptions<T> = {}
-): Promise<void> { 
+): Promise<string | undefined> { 
   const { body, ...rest } = options;
 
   const response = await fetch(url, { 
@@ -22,5 +22,7 @@ export async function apiClient<T = unknown>(
   if (!response.ok) { 
     const message = data?.message || `Request failed with status ${response.status}`; 
     throw new Error(message); 
-  } 
+  };
+  
+  return data?.message ?? "No message found";
 }

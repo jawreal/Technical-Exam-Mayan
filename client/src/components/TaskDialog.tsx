@@ -46,19 +46,23 @@ export default function TaskDialog({
   const handleSave = async (data: TaskFormData) => {
     if (isUpdate) {
       if (!id) throw new Error("Missing task id");
-      await apiClient<UpdateFormData>("/api/update-task", { 
+      const message = await apiClient<UpdateFormData>("/api/update-task", { 
         method: "PATCH", 
         body: { ...data, id }
       });
       
-      CustomToast({ description: "Task has been updated", status: "success" });
+      if(message){
+        CustomToast({ description: message, status: "success" }); 
+      }
     } else {
-      await apiClient<TaskFormData>("/api/add-task", { 
+      const message = await apiClient<TaskFormData>("/api/add-task", {
         method: "POST", 
         body: data
       });
       
-      CustomToast({ description: "Task has been added", status: "success" });
+      if(message){
+        CustomToast({ description: message, status: "success" }); 
+      }
     }
   };
 
