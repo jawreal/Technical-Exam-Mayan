@@ -25,7 +25,7 @@ const updateStatus = async (
     
     console.log("Status been updated");
     res.status(200).json({
-      message: "Status has been updated",
+      message: `Marked as ${status}`,
     });
   } catch (error) {
     console.log("Error in update task")
