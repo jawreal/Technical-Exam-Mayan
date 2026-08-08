@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "6305109d-afce-463b-8bca-9a814ea40807",
+  "id": "9b1e0be2-94f2-4060-b8c8-568218c474e0",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -11,7 +11,7 @@
         "incomplete",
         "complete"
       ],
-      "name": "status_enum",
+      "name": "enum_status",
       "entityType": "enums",
       "schema": "public"
     },
@@ -48,7 +48,7 @@
       "table": "tasks"
     },
     {
-      "type": "status_enum",
+      "type": "enum_status",
       "typeSchema": "public",
       "notNull": false,
       "dimensions": 0,
