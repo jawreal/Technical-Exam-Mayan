@@ -9,8 +9,8 @@ import {
 import { useState, type ReactNode } from "react"; 
 import TaskDialog from "@/components/TaskDialog"; 
 import { CustomToast } from "@/components/CustomToast";
-import deleteTask from "@/services/deleteTask";
 import { useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/services/apiClient";
 
 type Status = "complete" | "incomplete";
 
@@ -29,10 +29,15 @@ export default function ActionDropdown({ id, status, children, prevData }: Actio
   
   const handleDelete = async () => {
     try{
-      await deleteTask(id);
+      await apiClient<Pick<ActionProps, "id">>("/api/delete-task", {
+        method: "DELETE",
+        body: { id }
+      });
+      
       queryClient.invalidateQueries({
         queryKey: ["tasks-data"]
       }); // Refresh all task after deleting
+      
       CustomToast({
         description: "Task has been deleted", 
         status: "success"

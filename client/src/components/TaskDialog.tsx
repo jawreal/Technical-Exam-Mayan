@@ -6,10 +6,13 @@ import type { Dispatch, SetStateAction } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
 import { CustomToast } from "@/components/CustomToast";
-import addTask from "@/services/addTask";
-import updateTask from "@/services/updateTask";
+import { apiClient } from "@/services/apiClient";
 import FormField from "@/components/FormField"; 
 import { useQueryClient } from "@tanstack/react-query";
+
+/*
+  * UpdateFormData & TaskFormData is located at types/global.d.ts
+*/
 
 interface TaskDialogProps {
   open: boolean;
@@ -43,10 +46,18 @@ export default function TaskDialog({
   const handleSave = async (data: TaskFormData) => {
     if (isUpdate) {
       if (!id) throw new Error("Missing task id");
-      await updateTask({ ...data, id });
+      await apiClient<UpdateFormData>("/api/update-task", { 
+        method: "PATCH", 
+        body: { ...data, id }
+      });
+      
       CustomToast({ description: "Task has been updated", status: "success" });
     } else {
-      await addTask(data);
+      await apiClient<TaskFormData>("/api/add-task", { 
+        method: "POST", 
+        body: data
+      });
+      
       CustomToast({ description: "Task has been added", status: "success" });
     }
   };
